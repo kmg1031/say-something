@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<style>
+    #messages {
+        height : 50%;
+    }
+
+</style>
+<body>
+    <div id="app">
+        <ul id="messages"></ul>
+        <form id="chatForm" action="">
+            <input id="input" autocomplete="off" placeholder="..." /><button type="submit">보내기</button>
+        </form>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+
+        const socket = io();
+
+        function pushChat(text) {
+            const chat = new Chat(text);
+            socket.emit('chat message', chat.text);
+        }
+
+        function sendChat() {
+            const input = document.getElementById('input');
+            if (input.value) {
+                pushChat(input.value);ver
+                input.value = '';
+            }
+        }
+
+        function fetchChat(text) {
+            const item = document.createElement('li');
+            item.textContent = text;
+            document.getElementById('messages').appendChild(item);
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+
+        function Chat(text) {
+            this.text = text;
+        }
+
+        document.getElementById('chatForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            sendChat();
+        });
+
+        socket.on('chat message', function(msg) {
+            fetchChat(msg);
+        });
+
+    </script>
+</body>
+</html>
